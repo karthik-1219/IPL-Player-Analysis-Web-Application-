@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Player Search</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 50px;
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+      font-size: 16px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      width: 300px;
+      margin: auto;
+      text-align: left;
+    }
+    li {
+      background-color: #1a1a1a;
+      border-bottom: 1px solid #333;
+      padding: 10px;
+      cursor: pointer;
+    }
+    li:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Search for an IPL Player</h1>
+  <input type="text" id="search" placeholder="Type player name..." autocomplete="off" />
+  <ul id="suggestions"></ul>
+
+  <script>
+    const input = document.getElementById('search');
+    const suggestions = document.getElementById('suggestions');
+
+    input.addEventListener('input', async () => {
+      const query = input.value;
+      if (query.length === 0) {
+        suggestions.innerHTML = '';
+        return;
+      }
+
+      const res = await fetch(`/api/search?q=${query}`);
+      const names = await res.json();
+
+      suggestions.innerHTML = '';
+      names.forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        li.onclick = () => {
+          window.location.href = `/player?player=${encodeURIComponent(name)}`;
+        };
+        suggestions.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

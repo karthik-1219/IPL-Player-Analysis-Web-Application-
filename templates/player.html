@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ player }} - Stats</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 50px;
+    }
+    h1 {
+      text-align: center;
+      color: #f0db4f;
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      gap: 2rem;
+    }
+    .box {
+      width: 45%;
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      padding: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>{{ player }} Stats</h1>
+  <div class="container">
+    <div class="box">
+      <h2>Batting Stats</h2>
+      <ul>
+        {% for k, v in batting_stats.items() %}
+          <li><strong>{{ k }}:</strong> {{ v }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Bowling Stats</h2>
+      <ul>
+        {% for k, v in bowling_stats.items() %}
+          <li><strong>{{ k }}:</strong> {{ v }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

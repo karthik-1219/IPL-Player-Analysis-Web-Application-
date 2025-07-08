@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IPL Dashboard</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #f0db4f;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .card {
+      background-color: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 1rem 2rem;
+      width: 250px;
+    }
+    .card h2 {
+      color: #61dafb;
+    }
+    a {
+      display: inline-block;
+      margin-top: 2rem;
+      color: #f0db4f;
+      text-decoration: none;
+      padding: 10px 20px;
+      border: 1px solid #f0db4f;
+      border-radius: 5px;
+    }
+    a:hover {
+      background-color: #f0db4f;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>IPL Analysis Dashboard</h1>
+  <div class="stats">
+    {% for key, value in stats.items() %}
+      <div class="card">
+        <h2>{{ key }}</h2>
+        <p>{{ value }}</p>
+      </div>
+    {% endfor %}
+  </div>
+  <a href="/search">Go to Player Search</a>
+</body>
+</html>

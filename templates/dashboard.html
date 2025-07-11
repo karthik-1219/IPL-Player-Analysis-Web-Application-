@@ -1,36 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>IPL Dashboard</title>
   <style>
     body {
-      background-color: #000;
+      background-color: #121212; /* Lighter black */
       color: #fff;
       font-family: Arial, sans-serif;
-      text-align: center;
+      margin: 0;
       padding: 2rem;
+      text-align: center;
     }
+
+    .ipl-logo {
+      width: 120px;
+      margin: 0 auto;
+      display: block;
+    }
+
     h1 {
       color: #f0db4f;
+      margin-top: 1rem;
     }
+
+    p.description {
+      margin-top: 0.5rem;
+      color: #ccc;
+      font-size: 1.1rem;
+    }
+
     .stats {
       display: flex;
       justify-content: center;
       gap: 50px;
       flex-wrap: wrap;
-      margin-top: 2rem;
+      margin: 2rem 0;
     }
+
     .card {
-      background-color: #1c1c1c;
+      background-color: #1f1f1f;
       border: 1px solid #333;
       border-radius: 8px;
       padding: 1rem 2rem;
       width: 250px;
+      transition: transform 0.3s ease;
     }
+
     .card h2 {
       color: #61dafb;
     }
-    a {
+
+    .next-button {
       display: inline-block;
       margin-top: 2rem;
       color: #f0db4f;
@@ -39,14 +60,48 @@
       border: 1px solid #f0db4f;
       border-radius: 5px;
     }
-    a:hover {
+
+    .next-button:hover {
       background-color: #f0db4f;
       color: #000;
+    }
+
+    .team-logos {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 3rem;
+    }
+
+    .team-logos img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid #444;
+      object-fit: cover;
+      background-color: #fff;
+      padding: 4px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .team-logos img:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 15px #f0db4f;
+      border-color: #f0db4f;
     }
   </style>
 </head>
 <body>
+
+  <!-- IPL Logo -->
+  <img src="data/ipl.jpg" alt="IPL Logo" class="ipl-logo">
+
+  <!-- Title & Description -->
   <h1>IPL Analysis Dashboard</h1>
+  <p class="description">Get insights on team performances, match stats, and player achievements across IPL seasons.</p>
+
+  <!-- Stats Cards -->
   <div class="stats">
     {% for key, value in stats.items() %}
       <div class="card">
@@ -55,6 +110,23 @@
       </div>
     {% endfor %}
   </div>
-  <a href="/search">Go to Player Search</a>
+
+  <!-- Go to Player Search -->
+  <a class="next-button" href="/search">Go to Player Search</a>
+
+  <!-- 10 Team Logos -->
+  <div class="team-logos">
+    <img src="data/csk.jpg" alt="CSK">
+    <img src="data/mi.jpg" alt="MI">
+    <img src="data/rcb.jpg" alt="RCB">
+    <img src="data/gt.jpg" alt="GT">
+    <img src="data/lsg.jpg" alt="LSG">
+    <img src="data/kkr.jpg" alt="KKR">
+    <img src="data/rr.jpg" alt="RR">
+    <img src="data/dc.jpg" alt="DC">
+    <img src="data/pkbs.jpg" alt="PBKS">
+    <img src="data/srh.jpg" alt="SRH">
+  </div>
+
 </body>
 </html>

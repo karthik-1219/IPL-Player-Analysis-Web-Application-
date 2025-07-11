@@ -1,44 +1,60 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
-from utils.analysis import get_player_stats, get_dashboard_stats  # ✅ updated path
+from utils.analysis import get_player_stats, get_dashboard_stats
+from flask import Flask, render_template, request, send_from_directory
+import os
+
 
 app = Flask(__name__)
 
-# Load data
-deli = pd.read_csv("data/deliveries.csv")
-mat = pd.read_csv("data/matches.csv")
-mat.rename(columns={'id': 'match_id'}, inplace=True)
+# Load IPL dataset
+deliveries = pd.read_csv('data/deliveries.csv')
+matches = pd.read_csv('data/matches.csv')
 
-# Merge datasets
-deli = pd.merge(deli, mat[['match_id', 'season']], on='match_id', how='left')
-
-# Home route → Dashboard
 @app.route('/')
 def dashboard():
-    stats = get_dashboard_stats(deli, mat)
-    return render_template('dashboard.html', stats=stats)
+    stats = get_dashboard_stats(deliveries, matches)
+    return render_template("dashboard.html", stats=stats)
 
-# Player Search Page
 @app.route('/search')
-def search():
-    return render_template('index.html')
+def search_page():
+    player_team_df = deliveries[['batter', 'batting_team']].drop_duplicates()
+    team_counts = player_team_df.groupby('batting_team')['batter'].nunique().to_dict()
+    return render_template("player_search.html", team_counts=team_counts)
 
-# Real-time player search API
 @app.route('/api/search')
 def api_search():
     query = request.args.get('q', '').lower()
-    names = set(deli['batter'].unique()).union(set(deli['bowler'].unique()))
-    results = sorted([name for name in names if query in name.lower()])[:10]
-    return jsonify(results)
+    player_list = deliveries['batter'].dropna().unique()
+    filtered = [p for p in player_list if query in p.lower()]
+    return jsonify(filtered[:10])
 
-# Player Stats Page
 @app.route('/player')
-def player():
-    name = request.args.get('player')
-    stats = get_player_stats(name, deli)
-    return render_template('player.html', player=name,
-                           batting_stats=stats['batting'],
-                           bowling_stats=stats['bowling'])
+def player_page():
+    player_name = request.args.get('player')
+    if not player_name:
+        return "Player name not provided", 400
+
+    player_data = deliveries[deliveries['batter'] == player_name]
+    if player_data.empty:
+        return f"No data found for player {player_name}", 404
+
+    stats = get_player_stats(player_name, deliveries)
+
+    return render_template(
+        "player.html",
+        player=player_name,
+        runs=stats['batting']['Runs'],
+        balls=stats['batting']['Balls Faced'],
+        sr=stats['batting']['Strike Rate'],
+        team=player_data['batting_team'].value_counts().idxmax(),
+        dismissals=player_data[player_data['is_wicket'] == 1]['dismissal_kind'].value_counts().to_dict()
+    )
+# Serve images from the data/ folder
+@app.route('/data/<path:filename>')
+def data_files(filename):
+    return send_from_directory(os.path.join(app.root_path, 'data'), filename)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

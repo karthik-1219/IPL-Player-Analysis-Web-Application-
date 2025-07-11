@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Player Search</title>
+<style>
+  body {
+    display: flex;
+    margin: 0;
+    background: #0d1b2a; /* Midnight Blue */
+    color: #e0e1dd; /* Soft light gray for text */
+    font-family: Arial, sans-serif;
+    height: 100vh;
+  }
+
+  .left, .right {
+    padding: 40px;
+  }
+
+  .left {
+    width: 30%;
+    background: #1b263b; /* Darker blue-gray */
+  }
+
+  .right {
+    width: 70%;
+    border-left: 2px solid #415a77; /* Steely blue border */
+    background: #0d1b2a;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    background: #1e2e3e;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #415a77;
+    border-radius: 5px;
+    color: #e0e1dd;
+  }
+
+  input {
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+    background: #1b263b;
+    color: #e0e1dd;
+    border: 1px solid #778da9;
+    border-radius: 4px;
+  }
+
+  #suggestions li:hover {
+    background-color: #415a77;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="left">
+    <h2>Players by Team</h2>
+    <ul>
+      {% for team, count in team_counts.items() %}
+        <li><strong>{{ team }}</strong>: {{ count }} players</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="right">
+    <h2 style="text-align: center;">Search for Player</h2>
+
+    <input type="text" id="search" placeholder="Type player name..." autocomplete="off" />
+    <ul id="suggestions"></ul>
+  </div>
+
+  <script>
+    const input = document.getElementById('search');
+    const suggestions = document.getElementById('suggestions');
+
+    input.addEventListener('input', async () => {
+      const query = input.value;
+      if (query.length === 0) {
+        suggestions.innerHTML = '';
+        return;
+      }
+
+      const res = await fetch(`/api/search?q=${query}`);
+      const players = await res.json();
+
+      suggestions.innerHTML = '';
+      players.forEach(player => {
+        const li = document.createElement('li');
+        li.textContent = player;
+        li.onclick = () => window.location.href = `/player?player=${player}`;
+        suggestions.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

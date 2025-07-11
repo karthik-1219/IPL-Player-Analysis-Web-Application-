@@ -1,57 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>{{ player }} - Stats</title>
+  <title>{{ player }} - Player Profile</title>
   <style>
-    body {
-      background-color: #000;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 50px;
-    }
-    h1 {
-      text-align: center;
-      color: #f0db4f;
-    }
-    .container {
-      display: flex;
-      justify-content: space-around;
-      gap: 2rem;
-    }
-    .box {
-      width: 45%;
-      background-color: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      padding: 5px 0;
-    }
+    body { background: #1c1c1c; color: white; font-family: Arial; padding: 40px; }
+    .card { background: #2a2a2a; padding: 30px; border-radius: 10px; max-width: 600px; margin: auto; }
+    h1 { color: #f0db4f; }
+    p { font-size: 18px; }
+    .dismissals { margin-top: 20px; }
+    .dismissals h3 { color: #f0db4f; }
+    ul { padding-left: 0; list-style: none; }
+    li { padding: 5px 0; }
+    a { display: inline-block; margin-top: 20px; color: #f0db4f; text-decoration: none; }
   </style>
 </head>
 <body>
-  <h1>{{ player }} Stats</h1>
-  <div class="container">
-    <div class="box">
-      <h2>Batting Stats</h2>
-      <ul>
-        {% for k, v in batting_stats.items() %}
-          <li><strong>{{ k }}:</strong> {{ v }}</li>
-        {% endfor %}
-      </ul>
+  <div class="card">
+    <h1>{{ player }}</h1>
+    <p><strong>Total Runs:</strong> {{ runs }}</p>
+    <p><strong>Total Balls Faced:</strong> {{ balls }}</p>
+    <p><strong>Strike Rate:</strong> {{ sr }}</p>
+    <p><strong>Most Played For:</strong> {{ team }}</p>
+
+    <div class="dismissals">
+      <h3>Dismissal Types</h3>
+      {% if dismissals %}
+        <ul>
+          {% for dtype, count in dismissals.items() %}
+            <li>{{ dtype }}: {{ count }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No dismissals recorded.</p>
+      {% endif %}
     </div>
-    <div class="box">
-      <h2>Bowling Stats</h2>
-      <ul>
-        {% for k, v in bowling_stats.items() %}
-          <li><strong>{{ k }}:</strong> {{ v }}</li>
-        {% endfor %}
-      </ul>
-    </div>
+
+    <a href="/search">&larr; Back to Search</a>
   </div>
 </body>
 </html>

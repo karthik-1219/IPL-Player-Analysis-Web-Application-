@@ -1,67 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Player Search</title>
-  <style>
-    body {
-      background-color: #000;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 50px;
-      text-align: center;
-    }
-    input {
-      padding: 10px;
-      width: 300px;
-      font-size: 16px;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      width: 300px;
-      margin: auto;
-      text-align: left;
-    }
-    li {
-      background-color: #1a1a1a;
-      border-bottom: 1px solid #333;
-      padding: 10px;
-      cursor: pointer;
-    }
-    li:hover {
-      background-color: #333;
-    }
-  </style>
-</head>
-<body>
-  <h1>Search for an IPL Player</h1>
-  <input type="text" id="search" placeholder="Type player name..." autocomplete="off" />
-  <ul id="suggestions"></ul>
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
 
-  <script>
-    const input = document.getElementById('search');
-    const suggestions = document.getElementById('suggestions');
+app = Flask(__name__)
 
-    input.addEventListener('input', async () => {
-      const query = input.value;
-      if (query.length === 0) {
-        suggestions.innerHTML = '';
-        return;
-      }
+# Load IPL dataset (use your actual file name/path)
+deliveries = pd.read_csv('data/deliveries.csv')
 
-      const res = await fetch(`/api/search?q=${query}`);
-      const names = await res.json();
+@app.route('/search')
+def search_page():
+    # Get unique players and their teams
+    player_team_df = deliveries[['batter', 'batting_team']].drop_duplicates()
 
-      suggestions.innerHTML = '';
-      names.forEach(name => {
-        const li = document.createElement('li');
-        li.textContent = name;
-        li.onclick = () => {
-          window.location.href = `/player?player=${encodeURIComponent(name)}`;
-        };
-        suggestions.appendChild(li);
-      });
-    });
-  </script>
-</body>
-</html>
+    # Group by team and count unique players
+    team_counts = player_team_df.groupby('batting_team')['batter'].nunique().to_dict()
+
+    return render_template("player_search.html", team_counts=team_counts)
+
+@app.route('/api/search')
+def api_search():
+    query = request.args.get('q', '').lower()
+    player_list = deliveries['batter'].dropna().unique()
+    filtered = [p for p in player_list if query in p.lower()]
+    return jsonify(filtered[:10])
+
+@app.route('/')
+def dashboard():
+    # Example stats (customize with your actual logic if needed)
+    stats = {
+        "Total Matches": deliveries['match_id'].nunique(),
+        "Total Players": deliveries['batter'].nunique(),
+        "Total Teams": deliveries['batting_team'].nunique()
+    }
+    return render_template("dashboard.html", stats=stats)
+
+if __name__ == '__main__':
+    app.run(debug=True)

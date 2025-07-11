@@ -1,3 +1,5 @@
+import pandas as pd
+
 def get_player_stats(name, df):
     batting = df[df['batter'] == name]
     bowling = df[df['bowler'] == name]
